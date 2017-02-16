@@ -1,0 +1,15 @@
+-pbp            # -pbp is an abbreviation for the parameters in the book Perl Best Practices by Damian Conway
+-l=156          # PBP sets max line length to 78, but thats too short for this century so x1.5 = 117
+-nst            # set to no standard out
+-b              # fix inline file
+-bext='/'       # backup to .bak but delete if no errors
+-i=2          # indent two columns (default is 4)
+-ce            # cuddled elses
+-bar          # opening braces right
+-nsbl          # sub braces on same line (since we dont define params!)
+-lp            # veritical tightness newline
+-cti=1          # align closeing braces to opening
+-sot          # stack opening tokens - but doesn't appear to work
+-sct            # Stack Closing Tokens
+-nsfs          # for loop semicolons
+-nolq          # outtending on long quotes
