@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use FindBin;
+use File::Spec;
+use lib File::Spec->catdir( $FindBin::Bin, '..', 'lib' );
+use Reconciliation::Client;
+use Data::Dumper;
+
+my $client = Client->new({ name => 'c1' });
+print Dumper($client);
+
+# my $trade = Trade->new({ type => '', reference => '', security => '', quantity => ''  });
+# $trade->add_parent(4);
+# $trade->add_parent(8);
+# $trade->add_parent(12);
+# print Dumper($trade);
