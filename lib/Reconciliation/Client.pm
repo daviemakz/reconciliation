@@ -11,8 +11,11 @@ sub new {
   bless( $self, $class_name );
 
   # build base attributes
-  ( $self->{'_trades'}, $self->{'_trades_ref'}, $self->{'_trades_linked'}, $self->{'_trades_to_int'}, $self->{'_security_list'} )
-      = _get_trades( $self->{'name'} );
+  ( $self->{'_trades'},
+    $self->{'_trades_ref'},
+    $self->{'_trades_linked'},
+    $self->{'_trades_to_int'},
+    $self->{'_security_list'} ) = _get_trades( $self->{'name'} );
 
   # function: get trade internal reference via security identity
   sub get_trade_sec_int {
@@ -49,9 +52,14 @@ sub _get_trades {
                               empty_is_undef => 1,
                             } );
 
-  # open file handle or return blank data (just so typo's dont crash the program)
+  # open file handle or return blank data
   open( my $file_contents, "<", $filename )
-      or return ( \%trades, \%trade_ref, \%linked_trades, \%trades_to_int, \@securities );
+      or return (
+          \%trades,
+          \%trade_ref,
+          \%linked_trades,
+          \%trades_to_int,
+          \@securities );
 
   # process the csv file...
   my $counter = 0;
@@ -105,15 +113,23 @@ sub _get_trades {
   # add quantities of trades/returns to reference hash
   while ( my ( $key, $value ) = each %trades ) {
     if ( $trades{$key}->{'reference'} =~ m/(\w+)(:)(\d+)/ ) {
-      push( @{ $linked_trades{ $trades{$key}->{'security'} }{'R'} }, $trades{$key}->{'quantity'} );
+      push( @{ $linked_trades{ $trades{$key}->{'security'} }{'R'} },
+        $trades{$key}->{'quantity'} );
     } else {
-      $trades_to_int{ $trades{$key}->{'security'} } = $trades{$key}->{'reference'};
-      push( @{ $linked_trades{ $trades{$key}->{'security'} }{'T'} }, $trades{$key}->{'quantity'} );
+      $trades_to_int{ $trades{$key}->{'security'} }
+        = $trades{$key}->{'reference'};
+      push( @{ $linked_trades{ $trades{$key}->{'security'} }{'T'} },
+        $trades{$key}->{'quantity'} );
     }
   }
 
   # return
-  return ( \%trades, \%trade_ref, \%linked_trades, \%trades_to_int, \@securities );
+  return (
+    \%trades,
+    \%trade_ref,
+    \%linked_trades,
+    \%trades_to_int,
+    \@securities );
 }
 
 return 1;

@@ -63,50 +63,59 @@ sub new {
       my $quantity_return_highest;
       my $quantity_trade_lowest;
       my $quantity_trade_highest;
+      my $client2_trade_value = @{$client2_trade}[0];
+      my $client1_trade_value = @{$client1_trade}[0];
+      my $client2_return_value = @{$client2_return}[0];
+      my $client1_return_value = @{$client1_return}[0];
 
       # check missing trades
-      _missing_trade( $client1_name, @{$client2_trade}[0], $security_ref )
-          if ( $client1_trade_count < $client2_trade_count );
-      _missing_trade( $client2_name, @{$client1_trade}[0], $security_ref )
-          if ( $client1_trade_count > $client2_trade_count );
+      _missing_trade( $client1_name, $client2_trade_value, $security_ref )
+        if ( $client1_trade_count < $client2_trade_count );
+      _missing_trade( $client2_name, $client1_trade_value, $security_ref )
+        if ( $client1_trade_count > $client2_trade_count );
 
       # check missing returns
-      _missing_return( $client1_name, @{$client2_return}[0], $client1_int_ref )
-          if ( $client1_return_count < $client2_return_count );
-      _missing_return( $client2_name, @{$client1_return}[0], $client2_int_ref )
-          if ( $client1_return_count > $client2_return_count );
+      _missing_return( $client1_name, $client2_return_value, $client1_int_ref )
+        if ( $client1_return_count < $client2_return_count );
+      _missing_return( $client2_name, $client1_return_value, $client2_int_ref )
+        if ( $client1_return_count > $client2_return_count );
 
       # find highest/lowest return quantities
-      $quantity_return_lowest = @{$client1_return}[0] < @{$client2_return}[0] ? @{$client1_return}[0] : @{$client2_return}[0]
-          if ( ( @{$client2_return}[0] ) && ( @{$client1_return}[0] ) );
-      $quantity_return_highest = @{$client1_return}[0] < @{$client2_return}[0] ? @{$client2_return}[0] : @{$client1_return}[0]
-          if ( ( @{$client1_return}[0] ) && ( @{$client2_return}[0] ) );
+      $quantity_return_lowest = $client1_return_value < $client2_return_value
+        ? $client1_return_value : $client2_return_value
+        if ( ( $client2_return_value ) && ( $client1_return_value ) );
+      $quantity_return_highest = $client1_return_value < $client2_return_value
+        ? $client2_return_value : $client1_return_value
+        if ( ( $client1_return_value ) && ( $client2_return_value ) );
 
       # check return quantity matches
-      _incorrect_return_quantity( $client1_name, $quantity_return_highest, $quantity_return_lowest, $client1_int_ref )
-          if (    ( @{$client2_return}[0] )
-               && ( @{$client1_return}[0] ) )
-          && ( @{$client2_return}[0] != @{$client1_return}[0] );
-      _incorrect_return_quantity( $client2_name, $quantity_return_highest, $quantity_return_lowest, $client2_int_ref )
-          if (    ( @{$client1_return}[0] )
-               && ( @{$client2_return}[0] ) )
-          && ( @{$client1_return}[0] != @{$client2_return}[0] );
+      _incorrect_return_quantity( $client1_name, $quantity_return_highest,
+        $quantity_return_lowest, $client1_int_ref )
+        if ( ( $client2_return_value ) && ( $client1_return_value ) )
+        && ( $client2_return_value != $client1_return_value );
+      _incorrect_return_quantity( $client2_name, $quantity_return_highest,
+        $quantity_return_lowest, $client2_int_ref )
+        if ( ( $client1_return_value ) && ( $client2_return_value ) )
+        && ( $client1_return_value != $client2_return_value );
 
       # find highest/lowest trade quantities
-      $quantity_trade_lowest = @{$client1_trade}[0] < @{$client2_trade}[0] ? @{$client1_trade}[0] : @{$client2_trade}[0]
-          if ( ( @{$client2_trade}[0] ) && ( @{$client1_trade}[0] ) );
-      $quantity_trade_highest = @{$client1_trade}[0] < @{$client2_trade}[0] ? @{$client2_trade}[0] : @{$client1_trade}[0]
-          if ( ( @{$client1_trade}[0] ) && ( @{$client2_trade}[0] ) );
+      $quantity_trade_lowest = $client1_trade_value < $client2_trade_value
+        ? $client1_trade_value : $client2_trade_value
+        if ( ( $client2_trade_value ) && ( $client1_trade_value ) );
+      $quantity_trade_highest = $client1_trade_value < $client2_trade_value
+        ? $client2_trade_value : $client1_trade_value
+        if ( ( $client1_trade_value ) && ( $client2_trade_value ) );
 
       # check trade quantity match
-      _incorrect_trade_quantity( $client1_name, $quantity_trade_highest, $quantity_trade_lowest, $security_ref )
-          if (    ( @{$client2_trade}[0] )
-               && ( @{$client1_trade}[0] ) )
-          && ( @{$client2_trade}[0] != @{$client1_trade}[0] );
-      _incorrect_trade_quantity( $client2_name, $quantity_trade_highest, $quantity_trade_lowest, $security_ref )
-          if (    ( @{$client1_trade}[0] )
-               && ( @{$client2_trade}[0] ) )
-          && ( @{$client1_trade}[0] != @{$client2_trade}[0] );
+      _incorrect_trade_quantity( $client1_name, $quantity_trade_highest,
+        $quantity_trade_lowest, $security_ref )
+        if ( ( $client2_trade_value ) && ( $client1_trade_value ) )
+        && ( $client2_trade_value != $client1_trade_value );
+
+      _incorrect_trade_quantity( $client2_name, $quantity_trade_highest,
+        $quantity_trade_lowest, $security_ref )
+        if ( ( $client1_trade_value ) && ( $client2_trade_value ) )
+        && ( $client1_trade_value != $client2_trade_value );
 
     }
 
@@ -133,24 +142,28 @@ sub _get_uniq_array {
 
 sub _missing_return {
   my ( $name, $quantity, $ref ) = @_;
-  say "Client " . uc($name) . " is missing a return for " . $quantity . " on position " . $ref . ".";
+  say "Client " . uc($name) . " is missing a return for " . $quantity .
+    " on position " . $ref . ".";
   return;
 }
 
 sub _incorrect_return_quantity {
   my ( $name, $quantity_correct, $quantity_wrong, $ref ) = @_;
-  say "Client " . uc($name) . " has a quantity of " . $quantity_wrong . " on return " . $ref . ":1 that should be " . $quantity_correct . ".";
+  say "Client " . uc($name) . " has a quantity of " . $quantity_wrong .
+    " on return " . $ref . ":1 that should be " . $quantity_correct . ".";
 }
 
 sub _missing_trade {
   my ( $name, $quantity, $sec ) = @_;
-  say "Client " . uc($name) . " is missing a trade of " . $quantity . " for security " . $sec . ".";
+  say "Client " . uc($name) . " is missing a trade of " . $quantity .
+    " for security " . $sec . ".";
   return;
 }
 
 sub _incorrect_trade_quantity {
   my ( $name, $quantity_correct, $quantity_wrong, $sec ) = @_;
-  say "Client " . uc($name) . " has a quantity of " . $quantity_wrong . " on security " . $sec . " that should be " . $quantity_correct . ".";
+  say "Client " . uc($name) . " has a quantity of " . $quantity_wrong .
+    " on security " . $sec . " that should be " . $quantity_correct . ".";
 }
 
 return 1;
