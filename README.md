@@ -3,7 +3,10 @@
 [![Issue Count](https://codeclimate.com/github/daviemakz/reconciliation/badges/issue_count.svg)](https://codeclimate.com/github/daviemakz/reconciliation)
 
 # SUMMARY
-This is a small repository which performs reconciliation between the trades of two clients and lets you know if any data is missing or invalid. So if trades or returns are missing from either side this will be shown.
+
+Securities lending is the act of loaning a stock, derivative or other security to an investor or firm. After a trade is complete it goes through post-trade processing, where the buyer and the seller compare trade details, approve the transaction, change records of ownership and arrange for the transfer of securities and cash.
+
+This is a small repository which performs reconciliation between the trades of two clients and lets you know if any data is missing or invalid. So if trades or returns are missing from either side this information will be shown as well as discrepancies in quantity of stock traded.
 
 # HOW TO INSTALL
 
